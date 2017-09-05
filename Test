@@ -1,0 +1,362 @@
+import java.util.*;
+
+class Book {
+    private int bookId;
+    private String bookName;
+    private String bookAuthor;
+    private double bookPrice;
+    private boolean bookAvailability;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
+    public int getBookId() {
+        return this.bookId;
+    }
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
+    }
+    public String getBookName() {
+        return this.bookName;
+    }
+    public void setBookAuthor(String bookAuthor) {
+        this.bookAuthor = bookAuthor;
+    }
+    public String getBookAuthor() {
+        return this.bookAuthor;
+    }
+    public void setBookPrice(double bookPrice) {
+        this.bookPrice = bookPrice;
+    }
+    public double getBookPrice() {
+        return this.bookPrice;
+    }
+    public void setBookAvailability(boolean bookAvailability) {
+        this.bookAvailability = bookAvailability;
+    }
+    public boolean getBookAvailability() {
+        return this.bookAvailability;
+    }
+}
+
+class User {
+    private int userId;
+    private String userName;
+    private int userTransactions;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+    public int getUserId() {
+        return this.userId;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public String getUserName() {
+        return this.userName;
+    }
+    public void setUserTransactions(int userTransactions) {
+        this.userTransactions = userTransactions;
+    }
+    public int getUserTransactions() {
+        return this.userTransactions;
+    }
+}
+
+public class HelloWorld {
+    static ArrayList<User> usersList = new ArrayList<User>();
+    static ArrayList<Book> booksList = new ArrayList<Book>();
+    static HashMap<Integer, Integer> booksCopies = new HashMap<Integer, Integer>();
+    static HashMap<Integer, Integer> booksCopiesTreshold = new HashMap<Integer, Integer>();
+    public static void main(String args[]) {
+        System.out.println("Welcome to the Library");
+        Scanner sc = new Scanner(System.in);
+        setStaticValues();
+        while(true) {
+            System.out.println("Enter your choice:\n1. Register for the library\n2. Existing User? Borrow the book\n3. Exit");
+            try {
+                int choice = sc.nextInt();
+                HelloWorld lm = new HelloWorld();
+                switch(choice) {
+                    case 1: 
+                        lm.registerUser();
+                        break;
+                    case 2:
+                        lm.existingUser();
+                        break;
+                    case 3:
+                        System.exit(0);
+                    default:
+                        System.out.println("Please enter a valid option");
+                }
+            }
+            catch(Exception e) {
+                System.out.println("Please enter a valid option");
+            }
+        }
+    }
+    public void registerUser() {
+        HelloWorld lm = new HelloWorld();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your name: ");
+        String userName = sc.next();
+        int userId = usersList.size() + 1;
+        User newUser = new User();
+        newUser.setUserId(userId);
+        newUser.setUserName(userName);
+        usersList.add(newUser);
+        for(User user: usersList)
+            System.out.println(user.getUserId() + " - " + user.getUserName());
+    }
+    public void existingUser() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your choice: ");
+        System.out.println("1. Borrow a Book\n2. Return a book\n3. Donate a Book\n4. Change your username\n5. List all the books\n6. List users\n7. Know your no of transactions\n8. Exit");
+        try {
+            int choice = sc.nextInt();
+            HelloWorld lm = new HelloWorld();
+            switch(choice) {
+                case 1:
+                    lm.borrowBook();
+                    break;
+                case 2:
+                    lm.returnBook();
+                    break;
+                case 3:
+                    lm.donateBook();
+                    break;
+                case 4:
+                    lm.changeDetails();
+                    break;
+                case 5:
+                    lm.listAllBooks();
+                    break;
+                case 6:
+                    lm.listUsers();
+                    break;
+                case 7:
+                    lm.knowYourTransactions();
+                    break;
+                case 8:
+                    System.exit(0);
+                default:
+                    System.out.println("Please Enter a valid option");
+            }
+        }
+        catch(Exception e) {
+            System.out.println("Please Enter a valid option");
+        }
+    }
+    public void borrowBook() {
+        HelloWorld lm = new HelloWorld();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your user id :");
+        int userId = sc.nextInt();
+        if(lm.authenticateUser(userId)) {
+            System.out.println("Enter the book id you want to Borrow: ");
+            int bookId = sc.nextInt();
+            int bookAvailability = lm.bookAvailabalityCheck(bookId);
+            if(bookAvailability == 1) {
+                System.out.println("Your requested book is available. Do you want to proceed with Borrowing?\n");
+                System.out.println("1. Yes\n2. No\n");
+                try {
+                    int choice = sc.nextInt();
+                    if(choice == 1) {
+                        booksCopies.put(bookId, (booksCopies.get(bookId) - 1));
+                        System.out.println("Borrowing Successfull");
+                        lm.incrementUserTransaction(userId);
+                        lm.existingUser();
+                    }
+                    else if(choice == 2)
+                        lm.existingUser();
+                }
+                catch(Exception e) {
+                    System.out.println("Please enter a valid option");
+                }
+            }
+            else if(bookAvailability == 0)
+                System.out.println("Selected book is not available for borrowing. It is already borrowed by other user.");
+            else if(bookAvailability == -1)
+                System.out.println("Please enter valid book id");
+        }
+        else {
+            System.out.println("Invalid User");
+        }
+    }
+    public void returnBook() {
+        Scanner sc = new Scanner(System.in);
+        HelloWorld lm = new HelloWorld();
+        System.out.println("Enter your user id :");
+        int userId = sc.nextInt();
+        if(lm.authenticateUser(userId)) {
+            System.out.println("Enter the book id you want to return: ");
+            int bookId = sc.nextInt();
+            int bookAvailability = lm.bookAvailabalityCheckDup(bookId);
+            if(bookAvailability == 1) {
+                System.out.println("Do you want to proceed with returning?\n");
+                System.out.println("1. Yes\n2. No\n");
+                try {
+                    int choice = sc.nextInt();
+                    if(choice == 1) {
+                        booksCopies.put(bookId, (booksCopies.get(bookId) - 1));
+                        System.out.println("Returing of book is successfull");
+                        lm.incrementUserTransaction(userId);
+                        lm.existingUser();
+                    }
+                    else if(choice == 2)
+                        lm.existingUser();
+                }
+                catch(Exception e) {
+                    System.out.println("Please enter a valid option");
+                }
+            }
+            else if(bookAvailability == 0)
+                System.out.println("Selected book is not available for returning. All the copies are already present in the library.");
+            else if(bookAvailability == -1)
+                System.out.println("Please enter valid book id");
+        }
+        else {
+            System.out.println("Invalid User");
+        }
+    }
+    public void donateBook() {
+        Scanner sc = new Scanner(System.in);
+        HelloWorld lm = new HelloWorld();
+        System.out.println("Enter your user id :");
+        int userId = sc.nextInt();
+        if(lm.authenticateUser(userId)) {
+            System.out.println("Enter the book details you want to donate: ");
+            int bookId = booksList.size() + 1;
+            System.out.println("Enter book name:");
+            String bookName = sc.next();
+            System.out.println("Enter book author:");
+            String bookAuthor = sc.next();
+            System.out.println("Enter book price:");
+            double bookPrice = sc.nextDouble();
+            System.out.println("Enter the number of copies you want to donate: ");
+            int copies = sc.nextInt();
+            Book newBook = new Book();
+            newBook.setBookId(bookId);
+            newBook.setBookName(bookName);
+            newBook.setBookAuthor(bookAuthor);
+            newBook.setBookPrice(bookPrice);
+            newBook.setBookAvailability(true);
+            booksList.add(newBook);
+            booksCopies.put(bookId, copies);
+            booksCopiesTreshold.put(bookId, copies);
+            System.out.println("Thank you for donating the book to our library");
+            lm.incrementUserTransaction(userId);
+            lm.existingUser();
+        }
+        else {
+            System.out.println("Invalid User");
+        }
+    }
+    public void changeDetails() {
+        Scanner sc = new Scanner(System.in);
+        HelloWorld lm = new HelloWorld();
+        System.out.println("Enter your user id :");
+        int userId = sc.nextInt();
+        if(lm.authenticateUser(userId)) {
+            System.out.println("Enter your new desired username: ");
+            String userName = sc.next();
+            for(int i = 0; i < usersList.size(); i++) {
+                if(usersList.get(i).getUserId() == userId)
+                    usersList.get(i).setUserName(userName);
+            }
+            System.out.println("Your username is successfully changed");
+            lm.incrementUserTransaction(userId);
+            lm.existingUser();
+        }
+        else {
+            System.out.println("Invalid User");
+        }
+    }
+    public void listAllBooks() {
+        HelloWorld lm = new HelloWorld();
+        System.out.println("All the books available in the library are:");
+        for(int i = 0; i < booksList.size(); i++)
+            System.out.println(booksList.get(i).getBookId() + " - " + booksList.get(i).getBookName() + " - " + booksList.get(i).getBookAuthor() + " - " + booksList.get(i).getBookPrice() + " - " + booksList.get(i).getBookAvailability() + " - " + booksCopies.get(booksList.get(i).getBookId()) + " Copies");
+        lm.existingUser();
+    }
+    public void listUsers() {
+        HelloWorld lm = new HelloWorld();
+        System.out.println("All the users of the library are:");
+        for(int i = 0; i < usersList.size(); i++)
+            System.out.println(usersList.get(i).getUserId() + " - " + usersList.get(i).getUserName());
+        lm.existingUser();
+    }
+    public void knowYourTransactions() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your User id : ");
+        int userId = sc.nextInt();
+        for(User user: usersList) {
+            if(user.getUserId() == userId)
+                System.out.println("You have done " + user.getUserTransactions() + " transactions upto now");
+        }
+    }
+    public int bookAvailabalityCheck(int bookId) {
+        if(booksCopies.get(bookId) >= 1)
+            return 1;
+        else if(booksCopies.get(bookId) <= 0)
+            return 0;
+        else
+            return -1;
+    }
+    public int bookAvailabalityCheckDup(int bookId) {
+        if(booksCopies.get(bookId) == 0)
+            return 1;
+        else if(booksCopies.get(bookId) >= booksCopiesTreshold.get(bookId))
+            return 0;
+        else
+            return -1;
+    }
+    public boolean authenticateUser(int userId) {
+        for(int i = 0; i < usersList.size(); i++) {
+            if(usersList.get(i).getUserId() == userId)
+                return true;
+        }
+        return false;
+    }
+    public void incrementUserTransaction(int userId) {
+        for(User user: usersList) {
+            if(user.getUserId() == userId)
+                user.setUserTransactions(user.getUserTransactions() + 1);
+        }
+    }
+    public static void setStaticValues() {
+        User temp = new User();
+        temp.setUserId(1);
+        temp.setUserName("Vasishta");
+        usersList.add(temp);
+        User temp1 = new User();
+        temp1.setUserId(2);
+        temp1.setUserName("Sarath");
+        usersList.add(temp1);
+        User temp2 = new User();
+        temp2.setUserId(3);
+        temp2.setUserName("Ganesh");
+        usersList.add(temp2);
+        User temp3 = new User();
+        temp3.setUserId(4);
+        temp3.setUserName("Avinash");
+        usersList.add(temp3);
+        Book newBook = new Book();
+        newBook.setBookId(1);
+        newBook.setBookName("Java");
+        newBook.setBookAuthor("Bala Guru Swamy");
+        newBook.setBookPrice(1050);
+        newBook.setBookAvailability(true);
+        booksList.add(newBook);
+        Book newBook1 = new Book();
+        newBook1.setBookId(2);
+        newBook1.setBookName("Let Us C");
+        newBook1.setBookAuthor("Yeshwanth Khanetkar");
+        newBook1.setBookPrice(950);
+        newBook1.setBookAvailability(true);
+        booksList.add(newBook1);
+        booksCopies.put(1, 3);
+        booksCopies.put(2, 9);
+        booksCopiesTreshold.put(1, 3);
+        booksCopiesTreshold.put(2, 9);
+    }
+}
