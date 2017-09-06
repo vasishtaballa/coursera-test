@@ -1,0 +1,21 @@
+Tasks  05-09-2017
+1. Remove Constructor and add setters and getters -------------Done
+2. Maintain the no of transactions a user has made ------------Done
+3. Maintain the no of copies of each book ---------------------Done
+4. Validating user name ---------------------------------------Done
+5. Including the time of borrowing of book --------------------Done
+6. Integer.parseInt() for the bookId and check numberformat
+   Exception --------------------------------------------------Done
+7. If the same book is donated by another user, update the
+   hashmap instead of creating a new book ---------------------Done
+Taks 06-09-2017
+8. Use StringBuilder to append exceptions and getMessage()
+   function ---------------------------------------------------
+9. Implementing Integer.parseInt() for bookCopies in library
+   application ------------------------------------------------
+10. Learn JMS -------------------------------------------------
+11. Learn DB2 -------------------------------------------------
+12. Brushup sql queries ---------------------------------------
+13. Java Program to read from external properties file --------
+14. Java Program to Export data into excel sheet --------------
+15. What if web.xml is not present in our project -------------
