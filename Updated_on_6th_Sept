@@ -221,7 +221,7 @@ public class HelloWorld {
                         System.out.println("Borrowing Successfull");
                         lm.incrementUserTransaction(userId);
                         LocalDate localDate = LocalDate.now();
-                        String dateOfTransaction = DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
+                        String dateOfTransaction = DateTimeFormatter.ofPattern("dd/MM/yyy").format(localDate);
                         Transaction transaction = new Transaction();
                         transaction.setUserId(userId);
                         transaction.setBookId(bookId);
@@ -265,7 +265,7 @@ public class HelloWorld {
                         System.out.println("Returing of book is successfull");
                         lm.incrementUserTransaction(userId);
                         LocalDate localDate = LocalDate.now();
-                        String dateOfTransaction = DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
+                        String dateOfTransaction = DateTimeFormatter.ofPattern("dd/MM/yyy").format(localDate);
                         Transaction transaction = new Transaction();
                         transaction.setUserId(userId);
                         transaction.setBookId(bookId);
@@ -308,7 +308,7 @@ public class HelloWorld {
                 System.out.println("Thank you for donating the book to our library");
                 lm.incrementUserTransaction(userId);
                 LocalDate localDate = LocalDate.now();
-                String dateOfTransaction = DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
+                String dateOfTransaction = DateTimeFormatter.ofPattern("dd/MM/yyy").format(localDate);
                 Transaction transaction = new Transaction();
                 transaction.setUserId(userId);
                 transaction.setBookId(bookId);
@@ -337,7 +337,7 @@ public class HelloWorld {
                 System.out.println("Thank you for donating the book to our library");
                 lm.incrementUserTransaction(userId);
                 LocalDate localDate = LocalDate.now();
-                String dateOfTransaction = DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
+                String dateOfTransaction = DateTimeFormatter.ofPattern("dd/MM/yyy").format(localDate);
                 Transaction transaction = new Transaction();
                 transaction.setUserId(userId);
                 transaction.setBookId(bookId);
@@ -366,7 +366,7 @@ public class HelloWorld {
             System.out.println("Your username is successfully changed");
             lm.incrementUserTransaction(userId);
             LocalDate localDate = LocalDate.now();
-            String dateOfTransaction = DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
+            String dateOfTransaction = DateTimeFormatter.ofPattern("dd/MM/yyy").format(localDate);
             Transaction transaction = new Transaction();
             transaction.setUserId(userId);
             transaction.setBookId(-1);
@@ -407,10 +407,15 @@ public class HelloWorld {
     	HelloWorld lm = new HelloWorld();
     	System.out.println("Enter your User id: ");
     	int userId = sc.nextInt();
+    	boolean flag = false;
     	for(Transaction transaction: transactionsList) {
-    		if(transaction.getUserId() == userId)
-    			System.out.println(transaction.getBookId() + " - " + transaction.getDateOfTransaction() + " - " + transaction.getTransactionType());
+    		if(transaction.getUserId() == userId) {
+    		    flag = true;
+    		    System.out.println(transaction.getBookId() + " - " + transaction.getDateOfTransaction() + " - " + transaction.getTransactionType());    
+    		}
     	}
+    	if(flag == false)
+    	    System.out.println("You didn't do any transactions till now");
     	lm.existingUser();
     }
     public boolean validateUserName(String userName) {
